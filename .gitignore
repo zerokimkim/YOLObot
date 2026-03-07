@@ -1,0 +1,20 @@
+# Build artifacts
+.build/
+YOLObot.app/
+*.dmg
+dmg_temp/
+
+# Xcode
+*.xcodeproj/
+*.xcworkspace/
+xcuserdata/
+DerivedData/
+
+# macOS
+.DS_Store
+*.swp
+*~
+
+# Source files that shouldn't be in repo
+Sources/YOLObot_v1.0.0.dmg
+Sources/yolo_icon_org.png
