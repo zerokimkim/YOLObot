@@ -5,13 +5,19 @@ struct WidgetView: View {
     @ObservedObject var state: YoloState
     @State private var colorPhase = false
     @State private var rotation: Double = 0
-    @State private var showAbout = false
-
     // Brand colors from YOLObot icon
     private let brandTerracotta = Color(red: 0.61, green: 0.29, blue: 0.17)
     private let brandCoral = Color(red: 0.83, green: 0.51, blue: 0.41)
 
     var body: some View {
+        if state.isMinimized {
+            MiniWidgetView(state: state)
+        } else {
+            fullWidgetView
+        }
+    }
+
+    var fullWidgetView: some View {
         VStack(spacing: 0) {
 
             // ── Drag Handle ──
@@ -28,14 +34,14 @@ struct WidgetView: View {
                     .frame(width: 24, height: 24)
                     .clipShape(RoundedRectangle(cornerRadius: 5))
 
-                Text("YOLObot")
-                    .font(.system(size: 16, weight: .bold))
+                Text("YOLO zerobot")
+                    .font(.system(size: 14, weight: .bold))
 
                 Spacer()
 
-                // About
-                Button(action: { showAbout.toggle() }) {
-                    Image(systemName: "info.circle")
+                // Settings
+                Button(action: { openSettings() }) {
+                    Image(systemName: "gearshape.fill")
                         .font(.system(size: 12))
                         .foregroundColor(.secondary)
                         .frame(width: 24, height: 24)
@@ -45,10 +51,7 @@ struct WidgetView: View {
                         )
                 }
                 .buttonStyle(.plain)
-                .help("About YOLObot")
-                .popover(isPresented: $showAbout) {
-                    AboutPopover()
-                }
+                .help("Settings")
 
                 // Pin / Unpin (always-on-top toggle)
                 Button(action: togglePin) {
@@ -216,6 +219,18 @@ struct WidgetView: View {
                 .buttonStyle(.plain)
                 .help(state.isSessionsCollapsed ? "Expand sessions" : "Collapse sessions")
 
+                // Minimize to bottom
+                Button(action: { state.minimizeWidget() }) {
+                    HStack(spacing: 3) {
+                        Image(systemName: "chevron.down.2")
+                        Text("Mini")
+                    }
+                    .font(.system(size: 11))
+                    .foregroundColor(.primary.opacity(0.7))
+                }
+                .buttonStyle(.plain)
+                .help("Minimize to bottom")
+
                 Spacer()
 
                 Button(action: {
@@ -234,7 +249,7 @@ struct WidgetView: View {
             .padding(.vertical, 10)
 
             // ── Version Footer ──
-            Text("v1.0.0 · ZEVIS")
+            Text("v1.4.0 · ZEVIS")
                 .font(.system(size: 9))
                 .foregroundColor(.secondary.opacity(0.5))
                 .padding(.bottom, 8)
@@ -263,6 +278,13 @@ struct WidgetView: View {
             state.pinWidget()
         }
     }
+
+    // MARK: - Open Settings
+
+    private func openSettings() {
+        // Trigger the AppDelegate's showSettings via notification
+        NotificationCenter.default.post(name: .init("ShowSettings"), object: nil)
+    }
 }
 
 // MARK: - About Popover
@@ -275,10 +297,10 @@ struct AboutPopover: View {
                 .frame(width: 48, height: 48)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
 
-            Text("YOLObot")
+            Text("YOLO zerobot")
                 .font(.system(size: 16, weight: .bold))
 
-            Text("v1.0.0")
+            Text("v1.4.0")
                 .font(.system(size: 12))
                 .foregroundColor(.secondary)
 
@@ -315,6 +337,59 @@ struct AboutPopover: View {
         }
         .padding(16)
         .frame(width: 240)
+    }
+}
+
+// MARK: - Mini Widget View (Minimized Bar)
+
+struct MiniWidgetView: View {
+    @ObservedObject var state: YoloState
+
+    var body: some View {
+        HStack(spacing: 8) {
+            // Status dot
+            Circle()
+                .fill(state.isOn ? Color.green : Color.gray)
+                .frame(width: 8, height: 8)
+
+            // App name
+            Text("YOLO zerobot")
+                .font(.system(size: 12, weight: .bold))
+
+            // Status
+            Text(state.isOn ? "ON" : "OFF")
+                .font(.system(size: 10, weight: .bold))
+                .foregroundColor(state.isOn ? .green : .secondary)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(
+                    Capsule()
+                        .fill(state.isOn ? Color.green.opacity(0.2) : Color.gray.opacity(0.15))
+                )
+
+            Spacer()
+
+            // Restore button
+            Button(action: { state.restoreWidget() }) {
+                Image(systemName: "arrow.up.left.and.arrow.down.right")
+                    .font(.system(size: 11))
+                    .foregroundColor(.primary.opacity(0.7))
+            }
+            .buttonStyle(.plain)
+            .help("Restore widget")
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .frame(width: 220, height: 36)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(.ultraThinMaterial)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 }
 

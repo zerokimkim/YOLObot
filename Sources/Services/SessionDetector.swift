@@ -74,6 +74,9 @@ final class SessionDetector {
             return (nil, nil)
         }
 
+        var bestTitle: String?
+        var bestActivity: Date?
+
         for accountDir in accountDirs where !accountDir.hasPrefix(".") && accountDir != "skills-plugin" {
             let accountPath = "\(agentSessionsBase)/\(accountDir)"
             guard let orgDirs = try? fm.contentsOfDirectory(atPath: accountPath) else { continue }
@@ -86,13 +89,17 @@ final class SessionDetector {
                 for jsonFile in jsonFiles {
                     let jsonPath = "\(orgPath)/\(jsonFile)"
                     if let (title, lastActivity) = parseSessionJSON(path: jsonPath, matchingCwd: cwd) {
-                        return (title, lastActivity)
+                        if let activity = lastActivity,
+                           activity > (bestActivity ?? .distantPast) {
+                            bestTitle = title
+                            bestActivity = activity
+                        }
                     }
                 }
             }
         }
 
-        return (nil, nil)
+        return (bestTitle, bestActivity)
     }
 
     private func parseSessionJSON(path: String, matchingCwd: String) -> (String?, Date?)? {

@@ -10,6 +10,7 @@ final class YoloState: ObservableObject {
     @Published var statusMessage = "YOLO OFF"
     @Published var isPinned = true
     @Published var isSessionsCollapsed = false
+    @Published var isMinimized = false
 
     /// Direct panel reference
     weak var panel: NSPanel?
@@ -45,6 +46,53 @@ final class YoloState: ObservableObject {
         panel.collectionBehavior = [.managed, .fullScreenAuxiliary]
         panel.orderBack(nil)
         print("[YOLObot] UNPIN level=\(panel.level.rawValue)")
+    }
+
+    // MARK: - Minimize / Restore
+
+    private var savedFrame: NSRect?
+
+    func minimizeWidget() {
+        guard let panel = panel else { return }
+        savedFrame = panel.frame
+        isMinimized = true
+
+        // Animate to mini bar at bottom-right
+        if let screen = NSScreen.main {
+            let miniWidth: CGFloat = 220
+            let miniHeight: CGFloat = 40
+            let x = screen.visibleFrame.maxX - miniWidth - 16
+            let y = screen.visibleFrame.minY + 16
+            let miniFrame = NSRect(x: x, y: y, width: miniWidth, height: miniHeight)
+
+            NSAnimationContext.runAnimationGroup({ ctx in
+                ctx.duration = 0.3
+                ctx.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+                panel.animator().setFrame(miniFrame, display: true)
+            })
+        }
+        print("[YOLObot] Minimized to bottom bar")
+    }
+
+    func restoreWidget() {
+        guard let panel = panel else { return }
+        isMinimized = false
+
+        let targetFrame = savedFrame ?? {
+            if let screen = NSScreen.main {
+                let x = screen.visibleFrame.maxX - 280
+                let y = screen.visibleFrame.maxY - 420
+                return NSRect(x: x, y: y, width: 260, height: 400)
+            }
+            return NSRect(x: 100, y: 100, width: 260, height: 400)
+        }()
+
+        NSAnimationContext.runAnimationGroup({ ctx in
+            ctx.duration = 0.3
+            ctx.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+            panel.animator().setFrame(targetFrame, display: true)
+        })
+        print("[YOLObot] Restored to full view")
     }
 
     func toggle() {
@@ -105,6 +153,8 @@ final class YoloState: ObservableObject {
     }
 
     private func activateYolo() {
+        DebugLog.clear()
+        DebugLog.log("activateYolo: sessions.count=\(sessions.count)")
         statusMessage = "Injecting permissions..."
 
         // Engine A: Modify settings.json
@@ -119,12 +169,18 @@ final class YoloState: ObservableObject {
         uiAutomator.startMonitoring()
 
         // Monitor: Start session monitoring
+        startSessionMonitoring()
+    }
+
+    private func startSessionMonitoring() {
+        DebugLog.log("startSessionMonitoring: sessions.count=\(sessions.count)")
         if let session = sessions.first {
+            DebugLog.log("Monitoring: \(session.displayName) PID=\(session.pid) sid=\(session.sessionId)")
             monitoredSessionId = session.sessionId
             taskMonitor.startMonitoring(session: session) { [weak self] completedSession in
                 Task { @MainActor in
                     self?.notifier.sendCompletion(session: completedSession)
-                    self?.statusMessage = "Done: \(completedSession.displayName)"
+                    self?.statusMessage = "Done! — YOLO ON"
                 }
             }
         }

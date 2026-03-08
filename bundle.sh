@@ -33,6 +33,12 @@ if [ -f "claude_icon.png" ]; then
     echo "✅ Claude icon bundled"
 fi
 
+# Copy completion sound effect
+if [ -f "complete.aiff" ]; then
+    cp complete.aiff "$RESOURCES/complete.aiff"
+    echo "✅ Completion sound bundled"
+fi
+
 # Info.plist with icon reference
 cat > "$CONTENTS/Info.plist" << 'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
@@ -44,13 +50,13 @@ cat > "$CONTENTS/Info.plist" << 'PLIST'
     <key>CFBundleIdentifier</key>
     <string>com.zevis.yolobot</string>
     <key>CFBundleName</key>
-    <string>YOLObot</string>
+    <string>YOLO zerobot</string>
     <key>CFBundleDisplayName</key>
-    <string>YOLObot</string>
+    <string>YOLO zerobot</string>
     <key>CFBundleVersion</key>
-    <string>1.0.0</string>
+    <string>1.4.0</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0.0</string>
+    <string>1.4.0</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleIconFile</key>

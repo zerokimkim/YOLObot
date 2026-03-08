@@ -9,8 +9,12 @@
   - **Engine B (UI Automation):** Uses macOS Accessibility API to auto-click "Allow" buttons in real-time
 
 - **Session Monitoring:** Detects active Claude Code sessions and monitors task completion
-- **Notifications:** macOS alerts when a task finishes
-- **Floating Widget:** Always-on-top draggable panel with pin/unpin toggle
+- **Completion Notifications:**
+  - macOS system notification
+  - Custom completion sound effect
+  - Telegram Bot alerts (get notified on your phone)
+- **Floating Widget:** Always-on-top draggable panel with pin/unpin/minimize
+- **Settings UI:** Built-in settings window for Telegram configuration (⌘,)
 
 ## Requirements
 
@@ -32,7 +36,7 @@ open YOLObot.app
 
 ```bash
 bash create_dmg.sh
-# Opens YOLObot_v1.0.0.dmg — drag to Applications
+# Opens YOLObot_v1.4.0.dmg — drag to Applications
 ```
 
 ## Usage
@@ -52,9 +56,24 @@ bash create_dmg.sh
 |---------|-------------|
 | **YOLO ON / OFF** | Main toggle — activates/deactivates both engines |
 | **Pin** | Toggle always-on-top floating behavior |
+| **Minimize** | Shrink widget to a slim bottom bar |
 | **Refresh** | Re-scan for active Claude Code sessions |
 | **Collapse** | Hide/show the sessions list |
+| **Settings (⌘,)** | Configure Telegram notifications |
 | **Quit** | Exit YOLObot (restores original settings) |
+
+## Telegram Notifications
+
+Get notified on your phone when Claude Code tasks complete.
+
+### Setup
+
+1. Create a Telegram bot via [@BotFather](https://t.me/BotFather)
+2. Get your Chat ID from [@userinfobot](https://t.me/userinfobot)
+3. Open YOLObot Settings (⌘,) and enter your Bot Token + Chat ID
+4. Click "Test" to verify
+
+Each user sets up their own bot — no shared API keys or costs.
 
 ## How It Works
 
@@ -74,8 +93,13 @@ bash create_dmg.sh
 │  └─ Auto-clicks Allow/Yes/Approve   │
 │                                     │
 │  Monitor: TaskMonitor               │
-│  ├─ Watches session output files    │
+│  ├─ Tracks session activity + CPU   │
 │  └─ Sends notification on complete  │
+│                                     │
+│  Notifier                           │
+│  ├─ macOS notification              │
+│  ├─ Completion sound effect         │
+│  └─ Telegram Bot message            │
 │                                     │
 └─────────────────────────────────────┘
 ```
@@ -87,7 +111,9 @@ YOLObot/
 ├── Sources/
 │   ├── YOLObotApp.swift          # App entry, AppDelegate, FloatingPanel
 │   ├── Views/
-│   │   └── WidgetView.swift      # SwiftUI floating widget UI
+│   │   ├── WidgetView.swift      # SwiftUI floating widget UI
+│   │   ├── SettingsView.swift    # Telegram settings window
+│   │   └── HelpView.swift        # Help & info window
 │   ├── Models/
 │   │   ├── YoloState.swift       # Central state management
 │   │   └── SessionInfo.swift     # Session data model
@@ -96,17 +122,37 @@ YOLObot/
 │   │   ├── UIAutomator.swift        # Engine B — AX API auto-clicking
 │   │   ├── SessionDetector.swift    # Claude Code process detection
 │   │   ├── TaskMonitor.swift        # Task completion monitoring
-│   │   └── Notifier.swift           # macOS notifications
+│   │   ├── Notifier.swift           # macOS notifications + sound
+│   │   └── TelegramNotifier.swift   # Telegram Bot notifications
 │   └── Helpers/
 │       ├── ShellExecutor.swift   # Shell command wrapper
-│       └── FileWatcher.swift     # File monitoring
+│       ├── FileWatcher.swift     # File monitoring
+│       └── DebugLog.swift        # Debug file logging
 ├── Package.swift
 ├── bundle.sh                     # Build + .app bundle script
 ├── create_dmg.sh                 # DMG installer creation
 ├── YOLObot.entitlements
 ├── AppIcon.icns
-└── claude_icon.png
+├── claude_icon.png
+└── complete.aiff                 # Task completion sound effect
 ```
+
+## Changelog
+
+### v1.4.0
+- Completion sound effect on task finish
+- Telegram Bot notification support
+- Settings UI for Telegram configuration (⌘,)
+- Help window with usage guide
+- Minimize-to-bottom-bar mode
+- Improved task completion detection (CPU + session activity)
+- Debug logging for troubleshooting
+
+### v1.0.0
+- Initial release
+- Dual engine architecture (Settings Injection + UI Automation)
+- Floating widget with pin/unpin
+- Session detection and monitoring
 
 ## License
 
@@ -114,4 +160,4 @@ MIT
 
 ## Author
 
-**ZEVIS** — [github.com/zeroillri](https://github.com/zeroillri)
+**ZEVIS** — [github.com/zerokimkim](https://github.com/zerokimkim)

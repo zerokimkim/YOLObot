@@ -2,9 +2,9 @@
 set -e
 
 APP_NAME="YOLObot"
-DMG_NAME="${APP_NAME}_v1.0.0.dmg"
+DMG_NAME="${APP_NAME}_v1.4.0.dmg"
 DMG_TEMP="dmg_temp"
-VOLUME_NAME="YOLObot Installer"
+VOLUME_NAME="YOLO zerobot v1.4.0"
 
 cd "$(dirname "$0")"
 
@@ -29,7 +29,8 @@ ln -s /Applications "$DMG_TEMP/Applications"
 # Create README
 cat > "$DMG_TEMP/README.txt" << 'README'
 ═══════════════════════════════════════
-  YOLObot — Installation Guide
+  YOLO zerobot v1.4.0
+  Installation Guide
 ═══════════════════════════════════════
 
 1. Drag YOLObot.app into the Applications folder
@@ -40,9 +41,9 @@ cat > "$DMG_TEMP/README.txt" << 'README'
 
 3. Grant Accessibility permission:
    → System Settings > Privacy & Security > Accessibility
-   → Toggle ON the switch next to YOLObot
+   → Toggle ON the switch next to YOLO zerobot
 
-4. Done! The YOLObot widget appears in the top-right corner.
+4. Done! The floating widget appears in the top-right corner.
 
 ═══════════════════════════════════════
   System Requirements
@@ -54,16 +55,17 @@ cat > "$DMG_TEMP/README.txt" << 'README'
 ═══════════════════════════════════════
   Usage
 ═══════════════════════════════════════
-• YOLO ON  → Auto-approve Claude Code permissions + auto-click dialogs
+• YOLO ON  → Auto-approve Claude Code permissions
 • YOLO OFF → Restore original settings
 • Pin      → Toggle always-on-top
-• Refresh  → Re-scan active Claude sessions
+• Mini     → Minimize to bottom bar
+• Telegram → Get notified on your phone
 
 ═══════════════════════════════════════
   Author
 ═══════════════════════════════════════
 Made by ZEVIS
-github.com/zeroillri
+github.com/zerokimkim/YOLObot
 README
 
 # Create DMG
