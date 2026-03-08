@@ -2,9 +2,9 @@
 set -e
 
 APP_NAME="YOLObot"
-DMG_NAME="${APP_NAME}_v1.4.0.dmg"
+DMG_NAME="${APP_NAME}_v1.4.1.dmg"
 DMG_TEMP="dmg_temp"
-VOLUME_NAME="YOLO zerobot v1.4.0"
+VOLUME_NAME="YOLO zerobot v1.4.1"
 
 cd "$(dirname "$0")"
 
@@ -29,7 +29,7 @@ ln -s /Applications "$DMG_TEMP/Applications"
 # Create README
 cat > "$DMG_TEMP/README.txt" << 'README'
 ═══════════════════════════════════════
-  YOLO zerobot v1.4.0
+  YOLO zerobot v1.4.1
   Installation Guide
 ═══════════════════════════════════════
 

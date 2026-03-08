@@ -54,9 +54,9 @@ cat > "$CONTENTS/Info.plist" << 'PLIST'
     <key>CFBundleDisplayName</key>
     <string>YOLO zerobot</string>
     <key>CFBundleVersion</key>
-    <string>1.4.0</string>
+    <string>1.4.1</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.4.0</string>
+    <string>1.4.1</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleIconFile</key>

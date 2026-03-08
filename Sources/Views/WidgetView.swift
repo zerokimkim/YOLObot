@@ -249,7 +249,7 @@ struct WidgetView: View {
             .padding(.vertical, 10)
 
             // ── Version Footer ──
-            Text("v1.4.0 · ZEVIS")
+            Text("v1.4.1 · ZEVIS")
                 .font(.system(size: 9))
                 .foregroundColor(.secondary.opacity(0.5))
                 .padding(.bottom, 8)
@@ -300,7 +300,7 @@ struct AboutPopover: View {
             Text("YOLO zerobot")
                 .font(.system(size: 16, weight: .bold))
 
-            Text("v1.4.0")
+            Text("v1.4.1")
                 .font(.system(size: 12))
                 .foregroundColor(.secondary)
 
@@ -356,16 +356,20 @@ struct MiniWidgetView: View {
             Text("YOLO zerobot")
                 .font(.system(size: 12, weight: .bold))
 
-            // Status
-            Text(state.isOn ? "ON" : "OFF")
-                .font(.system(size: 10, weight: .bold))
-                .foregroundColor(state.isOn ? .green : .secondary)
-                .padding(.horizontal, 6)
-                .padding(.vertical, 2)
-                .background(
-                    Capsule()
-                        .fill(state.isOn ? Color.green.opacity(0.2) : Color.gray.opacity(0.15))
-                )
+            // Toggle ON/OFF
+            Button(action: { state.toggle() }) {
+                Text(state.isOn ? "ON" : "OFF")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundColor(state.isOn ? .green : .secondary)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(
+                        Capsule()
+                            .fill(state.isOn ? Color.green.opacity(0.2) : Color.gray.opacity(0.15))
+                    )
+            }
+            .buttonStyle(.plain)
+            .help(state.isOn ? "Turn YOLO OFF" : "Turn YOLO ON")
 
             Spacer()
 
